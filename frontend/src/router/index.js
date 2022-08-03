@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import IATBoard from '../views/IATBoard.vue'
 import ConfigIAT from '../views/ConfigIAT.vue'
 import SignUser from '../views/SignUser.vue'
+import AdminPanel from '../views/AdminPanel.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/sign',
       name: 'SignUser',
       component: SignUser
+    },
+    {
+      path: '/adminpanel',
+      name: 'AdminPanel',
+      component: AdminPanel
     }
   ]
 })
