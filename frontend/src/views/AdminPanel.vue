@@ -26,7 +26,7 @@
                 <div class="test-pratice">
                         <div class="is-pratice">
                             <div class="title-iat">
-                                <h6>Pratice</h6>
+                                <h6>{{selectedRunner.target_pratice_name}}</h6>
                             </div>
                             <div class="list-data" v-for="(data, index) in selectionIAT.target_pratice" :key="index">
                                 <div>{{index}}: {{data}}</div>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="is-test">
                             <div class="title-iat">
-                                <h6>Test</h6>
+                                <h6>{{selectedRunner.target_test_name}}</h6>
                             </div>
                             <div class="list-data" v-for="(data, index) in selectionIAT.target_test" :key="index">
                                 <div>{{index}}: {{data}}</div>
@@ -50,7 +50,7 @@
                 <div class="test-pratice">
                         <div class="is-pratice">
                             <div class="title-iat">
-                                <h6>Pratice</h6>
+                                <h6>{{selectedRunner.attribute_pratice_name}}</h6>
                             </div>
                             <div class="list-data" v-for="(data, index) in selectionIAT.attribute_pratice" :key="index">
                                 <div>{{index}}: {{data}}</div>
@@ -58,7 +58,7 @@
                         </div>
                         <div class="is-test">
                             <div class="title-iat">
-                                <h6>Test</h6>
+                                <h6>{{selectedRunner.attribute_test_name}}</h6>
                             </div>
                              <div class="list-data" v-for="(data, index) in selectionIAT.attribute_test" :key="index">
                                 <div>{{index}}: {{data}}</div>
@@ -82,11 +82,31 @@
                 </div>
             </div>
 
+            <div class="iat-content">
+                <div class="title-iat">
+                    <h4>Button Content</h4>
+                </div>
+                <div class="set-btn-text">
+                    <div>
+                        <div class="conf-title">Left side</div>
+                        <button class="btn-config">{{selectedRunner.btn_left}}</button>
+                    </div>
+                    <div>
+                        <div class="conf-title">Right side</div>
+                        <button class="btn-config">{{selectedRunner.btn_right}}</button>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+
             <div class="btn-panel-iat">
                 <div class="set-btn-save">
+                    
                     <button class="btn-save" @click="haddleSaveIAT">Use this IAT</button>
                 </div>
                 <div class="set-btn-add">
+                    
                     <button class="btn-add" @click="haddleCreateIAT">Create new IAT</button>
                 </div>
             </div>
@@ -108,6 +128,9 @@ export default {
         return{
             onHandIAT:[],
             selectionIAT:"",
+            isIATInfo:"None",
+            btnLeft:"n/a",
+            btnRight:"n/a",
             selectedRunner:"No IAT have select, try to create another IAT or select IAT in dropdown."
         }
     },
@@ -148,19 +171,22 @@ export default {
                 'access-token':  this.$cookies.get("IATToken")
                 }
             }
+            
 
             try{
                 const IATdata =  await axios.get(`${sendAPI}/findingiat`,headerConf);
-                this.onHandIAT = IATdata.data
+ 
+                this.onHandIAT = IATdata.data;
+            
             }catch(err){
-                // console.log("get data ==> ",err)
+                console.log("get data ==> ",err)
                 this.$cookies.remove("IATToken")
                 this.$cookies.remove("IATAdmin")
                 this.$router.push("/login");
             }
         },
         async querySelectedIAT(){
-
+            // console.log(this.selectionIAT)
             const headerConf = {
                 headers:{
                 'Content-Type': 'application/json',
@@ -168,9 +194,21 @@ export default {
                 }
             }
 
+            const payload = {
+                runner: this.selectionIAT.runner
+            }
+
+            console.log("querySelectedIAT ==> ", payload)
+
             try{
                 const selectedIAT = await axios.get(`${sendAPI}/iatselected`,headerConf);
+                const showInfoIAT = await axios.post(`${sendAPI}/iatquerydata`,payload,headerConf);
+                this.isIATInfo = showInfoIAT.data;
+                // console.log(this.isIATInfo)
                 this.selectedRunner =  selectedIAT.data
+                this.btnLeft = selectedIAT.data.btn_left
+                this.btnRight = selectedIAT.data.btn_right
+
                 // this.selectionIAT = selectedIAT.data
             }catch(err){
                 this.$cookies.remove("IATToken")
@@ -216,6 +254,27 @@ export default {
     margin-bottom: 50px;
     font-weight: bold;
     font-size: 17px
+}
+
+.conf-title{
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.set-btn-text{
+    display:flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.btn-config{
+    width: 120px;
+    height: 40px;
+    border-radius: 10px;
+    color: white;
+    border: 1px solid rgb(129, 125, 125);
+    background: rgb(129, 125, 125);
+    font-weight: bold;
 }
 
 .icon-border{

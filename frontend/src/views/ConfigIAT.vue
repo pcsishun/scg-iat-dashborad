@@ -13,11 +13,39 @@
         <input class="runner-input" v-model="runner"/>
       </div>
 
+      <div class="set-btn-change"> 
+        <div class="btn-change">
+          <div><input class="input-change" v-model="btn_left"/></div>
+          <button class="btn-config">{{btn_left}}</button>
+        </div>
+        <div>
+          <div><input class="input-change"  v-model="btn_right"/></div>
+          <button class="btn-config">{{btn_right}}</button>
+        </div>
+      </div>
+
       <div class= "set-category">
         <div class="target-category"> 
           <div class="title">
             <h4>Target Category</h4>
             <p>Adding your target category.</p>
+            <div class="input-content-left-right">
+              <div class="left-side">
+                <div class="set-title-left-right">
+                  <div>{{tarTittleLeft}}</div>
+                  <!-- <div><button  class="btn-haddle-t" @click="haddleChangeTitle('att-p')">+</button></div> -->
+                </div>
+                
+                <input placeholder="name attribute left" v-model="tarTittleLeft"/>
+              </div>
+              <div class="right-side">
+                <div class="set-title-left-right">
+                  <div>{{tarTittleRight}}</div>
+                  <!-- <div><button  class="btn-haddle-t" @click="haddleChangeTitle('att-t')">+</button></div> -->
+                </div>
+                <input placeholder="name attribute right" v-model="tarTittleRight"/>
+              </div>
+            </div>
           </div>
 
           <div class="show-input"> 
@@ -39,7 +67,7 @@
           </div>
           <div class="left-size">
             <div class="pratice-category">
-              Pratice
+              {{tarTittleLeft}}
             </div>
             <div class="btn-add-remove">
               <input class="target-input" v-model="targetPratice"/>
@@ -50,7 +78,7 @@
 
           <div class="right-size">
             <div class="pratice-category">
-              Test
+              {{tarTittleRight}}
             </div>
             <div class="btn-add-remove">
               <input class="target-input" v-model="targetTest"/>
@@ -65,10 +93,27 @@
         </div>
 
         <div class="attribute-category">
+          
           <div class="title">
             <h4>Attribute</h4>
             <p >Adding your attribute.</p>
-
+            <div class="input-content-left-right">
+              <div class="left-side">
+                <div class="set-title-left-right">
+                  <div>{{attTitleLeft}}</div>
+                  <!-- <div><button  class="btn-haddle-t" @click="haddleChangeTitle('att-p')">+</button></div> -->
+                </div>
+                
+                <input placeholder="name attribute left" v-model="attTitleLeft"/>
+              </div>
+              <div class="right-side">
+                <div class="set-title-left-right">
+                  <div>{{attTitleRight}}</div>
+                  <!-- <div><button  class="btn-haddle-t" @click="haddleChangeTitle('att-t')">+</button></div> -->
+                </div>
+                <input placeholder="name attribute right" v-model="attTitleRight"/>
+              </div>
+            </div>
           </div>
 
           <div class="show-input"> 
@@ -90,7 +135,7 @@
           </div>
           <div class="left-size">
             <div class="pratice-category">
-              Pratice
+              {{attTitleLeft}}
             </div>
             <div class="btn-add-remove">
               <input class="target-input" v-model="attributePratice"/>
@@ -101,7 +146,7 @@
 
           <div class="right-size">
             <div class="pratice-category">
-              Test
+              {{attTitleRight}}
             </div>
             <div class="btn-add-remove">
               <input class="target-input" v-model="attributeTest"/>
@@ -188,6 +233,12 @@ export default {
   data(){
     return{
       runner:"",
+      btn_left:"ข้อความปุ่มซ้าย",
+      btn_right: "ข้อความปุ่มขวา",
+      tarTittleLeft: "left side",
+      tarTittleRight:"right side",
+      attTitleLeft:"left side",
+      attTitleRight:"right side",
       targetPratice:"",
       targetTest:"",
       attributePratice:"",
@@ -251,6 +302,12 @@ export default {
 
       const payload = {
         runner: this.runner,  
+        btn_left: this.btn_left,
+        btn_right: this.btn_right,
+        attribute_pratice_name: this.attTitleLeft,
+        attribute_test_name:this.attTitleRight,
+        target_pratice_name:this.tarTittleLeft,
+        target_test_name:this.tarTittleRight,
         target_pratice: this.targetLeft, 
         target_test: this.targetRight,  
         attribute_pratice: this.attributeLeft,
@@ -323,6 +380,17 @@ export default {
         this.$cookies.remove("IATAdmin")
         this.$router.push("/login")
       }
+    },
+    haddleChangeTitle(evt){
+      if(evt === "tar-p"){
+        this.tarTittleLeft = this.tarTittleLeft
+      }else if(evt === "tar-t"){
+        this.tarTittleRight = this.tarTittleRight
+      }else if(evt === "att-p"){
+        this.attTitleLeft = this.attTitleLeft
+      }else if(evt === "att-t"){
+        this.attTitleRight = this.attTitleRight
+      }
     }
   }
 }
@@ -340,6 +408,52 @@ export default {
   text-align: center;
   font-weight: bold;
   font-size: 20px;
+}
+
+
+.set-btn-change{
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  margin-top: 30px;
+}
+
+.btn-config{
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  color: white;
+  border: 1px solid rgb(129, 125, 125);
+  background: rgb(129, 125, 125);
+  font-weight: bold;
+}
+
+.input-change{
+  margin-bottom: 10px;
+  width: 120px;
+  height: 25px;
+  border-radius: 5px;
+  border: 1px solid gray
+}
+.input-content-left-right{
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.left-side > input{
+  width: 120px;
+  height: 20px;
+}
+
+.right-side > input{
+  width: 120px;
+  height: 20px;
+}
+
+.set-title-left-right{
+  display:flex;
+  
 }
 .config-iat-container{
   width: 80%;
@@ -411,6 +525,17 @@ export default {
   height: 20px;
   border: 1px solid rgb(90, 203, 241);
   background: rgb(90, 203, 241);
+  border-radius: 50%;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.btn-haddle-t{
+  color: white;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgb(39, 141, 42);
+  background: rgb(39, 141, 42);
   border-radius: 50%;
   font-weight: bold;
   margin-left: 10px;

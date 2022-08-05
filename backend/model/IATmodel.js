@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const IATmodel = new mongoose.Schema({
     runner: {type:String},
+    btn_left: {type:String},
+    btn_right: {type:String},
+    attribute_pratice_name: {type:String},
+    attribute_test_name:  {type:String},
+    target_pratice_name:  {type:String},
+    target_test_name: {type:String},
     target_pratice: {type:Array},
     target_test: {type:Array},
     attribute_pratice : {type:Array},

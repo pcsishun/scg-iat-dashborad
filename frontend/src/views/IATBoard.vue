@@ -10,13 +10,26 @@
     </div> -->
     <div class="content-iat-container" v-if="isFinsh === false">
       <div class="set-content">
-        <div class="set-text">
+        <div class="content-container">
+          <div class="set-text">
           {{isWord}}
+          </div>
+          <div class="set-sub-text">
+            {{isSubWord}}
+          </div>
         </div>
-        <div class="set-sub-text">
-          {{isSubWord}}
+
+        <div class="content-container" v-if="isCompareAttrubuteAndTest === true">
+          <div class="set-text">
+          {{compareIsWord}}
+          </div>
+          <div class="set-sub-text">
+            {{compareIsSubWord}}
+          </div>
         </div>
+        
       </div>
+      
       <!-- <div class="set-pratice">
         <div class="show-content" >
           {{isPratice}}
@@ -42,21 +55,21 @@
       </div>
       <div class="target-attibute">
         <div class="test-set">
-          <div class="title-test">Target test</div>
+          <div class="title-pratice">{{iatData.target_pratice_name}}</div>
           <div v-for="(data, index) in targetTest" :key="index">
             {{data}}
           </div>
-          <div class="title-test">Attribute test</div>
+          <div class="title-test">{{iatData.attribute_test_name}}</div>
           <div v-for="(data, index) in attributeTest" :key="index">
             {{data}}
           </div>
         </div>
         <div class="pratice-set">
-          <div class="title-pratice">Target pratice</div>
+          <div class="title-pratice">{{iatData.target_pratice_name}}</div>
           <div v-for="(data, index) in targetPratice" :key="index">
             {{data}}
           </div>
-          <div class="title-test">Attribute pratice</div>
+          <div class="title-test">{{iatData.attribute_pratice_name}}</div>
           <div v-for="(data, index) in attributePratice" :key="index">
             {{data}}
           </div>
@@ -66,12 +79,12 @@
 
     <div class="footer-iat-container" v-if="isStart === true && isFinsh === false">
       <div v-if="switchType === false">
-        <button class="btn-ok" @click="btnSelection('left',isWord + ' ' + isSubWord)">ไม่เห็นด้วย</button>
-        <button class="btn-nope" @click="btnSelection('right',isWord + ' ' + isSubWord)">เห็นด้วย</button>
+        <button class="btn-ok" @click="btnSelection('left',isWord + ' ' + isSubWord, compareIsWord + ' ' + compareIsSubWord)">{{iatData.btn_left}}</button>
+        <button class="btn-nope" @click="btnSelection('right',isWord + ' ' + isSubWord, compareIsWord + ' ' + compareIsSubWord)">{{iatData.btn_right}}</button>
       </div>
       <div v-if="switchType === true">
-        <button class="btn-ok" @click="btnSelection('right',isWord + ' ' + isSubWord)">เห็นด้วย</button>
-        <button class="btn-nope" @click="btnSelection('left',isWord + ' ' + isSubWord)">ไม่เห็นด้วย</button>
+        <button class="btn-ok" @click="btnSelection('right',isWord + ' ' + isSubWord), compareIsWord + ' ' + compareIsSubWord">{{iatData.btn_right}}</button>
+        <button class="btn-nope" @click="btnSelection('left',isWord + ' ' + isSubWord), compareIsWord + ' ' + compareIsSubWord">{{iatData.btn_left}}</button>
       </div>
     </div>
 
@@ -108,22 +121,25 @@ export default {
       targetTest:[],
       attributePratice:[],
       attributeTest:[],
-      isWord:"",
-      isSubWord:"",
       timingCount: 10,
       switchType:false,
       isFinsh: false,
-      // isPratice:"",
-      // isTest:"",
-      // isPraticeTA:"",
-      // isTestTA:"",
       isStart: false,
       indexCount: 0,
       isRound: 10,
       setTime:0,
       dScore:0,
       showResult: false,
-      isResult:[]
+      isResult:[],
+      isType:"b1",
+
+      isCompareAttrubuteAndTest: false,
+      isWord:"",
+      isSubWord:"",
+
+      compareIsWord: "",
+      compareIsSubWord:""
+
     }
   },
   methods:{
@@ -149,44 +165,50 @@ export default {
 
       }
     },
-    btnSelection(evt, content){
-      this.timingCount = 10;
-      if(this.indexCount <= this.isRound){
-        // console.log("D1")
+    btnSelection(evt, contentLeft, contentRight){
+      if(this.isType === "b1"){
+        console.log('b1')
+        if(this.indexCount >= 10){
+          this.isType = "b2"
+          this.indexCount = 0;
+        }
+
         const timing =  performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D1",
+          typeCal: "b1",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
         const targetPraticeElement =  this.targetPratice[Math.floor(Math.random()*this.targetPratice.length)];
         this.isWord = targetPraticeElement;
-       // const targetTestElement =  this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
-        
-
-        // this.isPratice = targetPraticeElement;
-        // this.isTest = targetTestElement; 
 
         this.setTime = performance.now();
         this.indexCount += 1
 
-      }else if(this.indexCount <= this.isRound + this.isRound 
-      && this.indexCount > this.isRound + this.isRound){
-        // && this.indexCount > this.isRound + this.isRound
-        // console.log("D2")
+        
+
+      }else if(this.isType === "b2"){
+        console.log('b2')
+        if(this.indexCount >= 10){
+          this.isType = "b3"
+          this.indexCount = 0
+        }
+
         const timing = performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D2",
+          typeCal: "b2",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
@@ -201,73 +223,85 @@ export default {
         this.setTime = performance.now();
         this.indexCount += 1
 
-      }else if(this.indexCount <= this.isRound + this.isRound +  this.isRound ){
-        // && this.indexCount > this.isRound + this.isRound +  this.isRound
-        // console.log("D3")
+      }else if(this.isType === "b3"){
+        console.log('b3')
+        if(this.indexCount >= 20){
+          this.isType = "b4"
+          this.indexCount = 0
+        }
+
         const timing = performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D3",
+          typeCal: "b3",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
         const targetPraticeElement = this.targetPratice[Math.floor(Math.random()*this.targetPratice.length)];
         const attributePraticeElement = this.attributePratice[Math.floor(Math.random()*this.attributePratice.length)];
 
-        // const targetTestElement =  this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
-        // const attributeTestElement = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
-
-        
-        // this.isPratice = attributePraticeElement;
-        // this.isPraticeTA = targetPraticeElement;
-
-        // this.isTest = attributeTestElement;
-        // this.isTestTA = targetTestElement;
+        this.compareIsWord = this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
+        this.compareIsSubWord = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
 
         this.isWord = targetPraticeElement
         this.isSubWord = attributePraticeElement
 
         this.setTime = performance.now();
         this.indexCount += 1
-      }else if(this.indexCount <= this.isRound + this.isRound + this.isRound + this.isRound ){
-        if(this.indexCount === this.isRound + this.isRound + this.isRound + this.isRound){
+      }else if(this.isType === "b4"){
+        console.log('b4')
+
+        if(this.indexCount >= 40){
+          this.isType = "b5"
           this.switchType = true
+          this.indexCount = 0
         }
         // console.log("D4")
         const timing = performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D4",
+          typeCal: "b4",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
-        const targetTestElement =  this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
-        const attributeTestElement = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
+        const targetPraticeElement = this.targetPratice[Math.floor(Math.random()*this.targetPratice.length)];
+        const attributePraticeElement = this.attributePratice[Math.floor(Math.random()*this.attributePratice.length)];
 
-        this.isWord = targetTestElement
-        this.isSubWord = attributeTestElement
+        this.compareIsWord = this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
+        this.compareIsSubWord = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
+
+        this.isWord = targetPraticeElement
+        this.isSubWord = attributePraticeElement
 
         this.setTime = performance.now();
         this.indexCount += 1
-      }else if(this.indexCount <= this.isRound + this.isRound + this.isRound + this.isRound + this.isRound){
-        // console.log("D5");
+      }else if(this.isType === "b5"){
+        console.log('b5')
+        if(this.indexCount >= 10){
+          this.isType = "b6"
+          this.indexCount = 0
+        }
+
         this.isSubWord = "";
         const timing =  performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D5",
+          typeCal: "b5",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
@@ -281,51 +315,69 @@ export default {
 
         this.setTime = performance.now();
         this.indexCount += 1
-      }else if(this.indexCount <= this.isRound + this.isRound + this.isRound + this.isRound + this.isRound + this.isRound){
-        // console.log("D6");
+      }else if(this.isType === "b6"){
+        console.log('b6')
+        if(this.indexCount >= 20){
+          this.isType = "b7"
+          this.indexCount = 0
+        }
+
         const timing =  performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D6",
+          typeCal: "b6",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
         const targetPraticeElement = this.targetPratice[Math.floor(Math.random()*this.targetPratice.length)];
         const attributePraticeElement = this.attributePratice[Math.floor(Math.random()*this.attributePratice.length)];
 
+        this.compareIsWord = this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
+        this.compareIsSubWord = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
+
+        this.isWord = targetPraticeElement
+        this.isSubWord = attributePraticeElement
+        
+
         this.isWord = targetPraticeElement
         this.isSubWord = attributePraticeElement
 
         this.setTime = performance.now();
         this.indexCount += 1
-      }else if(this.indexCount <= this.isRound + this.isRound + this.isRound + this.isRound + this.isRound + this.isRound + this.isRound){
-        console.log("D7");
-    
+      }else if(this.isType === "b7"){
+        console.log('b7')
         const timing =  performance.now();
         const caltiming = timing - this.setTime;
 
         this.isResult.push({
-          typeCal: "D7",
+          typeCal: "b7",
           runnerName: this.runner,
           userSelect: evt,
-          contentSelect: content,
+          contentLeft: contentLeft ? contentLeft: "No-content",
+          contentRight: contentRight? contentRight: "No-content",
           milliseconds: caltiming
         });
 
-        const targetTestElement =  this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
-        const attributeTestElement = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
+        const targetPraticeElement = this.targetPratice[Math.floor(Math.random()*this.targetPratice.length)];
+        const attributePraticeElement = this.attributePratice[Math.floor(Math.random()*this.attributePratice.length)];
 
-        this.isWord = targetTestElement
-        this.isSubWord = attributeTestElement
+        this.compareIsWord = this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
+        this.compareIsSubWord = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
+
+        this.isWord = targetPraticeElement
+        this.isSubWord = attributePraticeElement
 
         this.setTime = performance.now();
         this.indexCount += 1;
-        if(this.indexCount > this.isRound + this.isRound + this.isRound + this.isRound + this.isRound + this.isRound + this.isRound){
+
+        if(this.indexCount >= 40){
           this.isFinsh = true;
+          this.indexCount = 0
         }
         
       }
@@ -334,33 +386,16 @@ export default {
     },
     btnStart(){
 
-      // const timing =  performance.now();
-      // this.setTime = timing;
 
       this.isStart = true;
       this.btnSelection();
 
-      // const targetPraticeElement =  this.targetPratice[Math.floor(Math.random()*this.targetPratice.length)];
-      // const targetTestElement =  this.targetTest[Math.floor(Math.random()*this.targetTest.length)];
-      // const attributePraticeElement = this.attributePratice[Math.floor(Math.random()*this.attributePratice.length)];
-      // const attributeTestElement = this.attributeTest[Math.floor(Math.random()*this.attributeTest.length)];
-
-      // this.isTargetPratice = targetPraticeElement;
-      // this.isTargetTest = targetTestElement; 
-      // this.isAttributePratice = attributePraticeElement;
-      // this.isAttributeTest = attributeTestElement;
-
-      // this.isWord = targetTestElement; 
-      // this.isSubWord = attributeTestElement;
-
-      // this.setTime = performance.now();
-      // this.indexCount += 1
     },
     async btnCalResult(){
-      // console.log(this.isResult);
+
       const personalData = localStorage.getItem("user_sign_iat");
       const convertData = JSON.parse(personalData);
-      // console.log(convertData);
+
 
       const payload = {
         firstname: convertData.firstname,
@@ -427,7 +462,7 @@ export default {
   margin: auto;
   text-align: center;
 }
-
+  
 .title-iat{
   margin: auto;
   text-align: center;
@@ -457,15 +492,19 @@ export default {
   display: flex;
   justify-content: space-around;
   margin-top: 50px;
+  margin-bottom: 30px;
 }
 
 .title-test{
   text-align: center;
   font-weight: bold;
 }
-.title-pratice{
+.title-pratice, .title-test{
   text-align: center;
   font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border-bottom: 2px solid grey
 }
 
 .footer-iat-container-result , .footer-iat-container-start{

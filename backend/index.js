@@ -7,6 +7,9 @@ const express  = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const multer  = require('multer');
+const imageToBase64 = require("image-to-base64");
+
 
 // import middleware // 
 const auth = require("./middleware/auth");
@@ -16,6 +19,7 @@ const userAdmin = require('./model/userAdmin');
 const IATmodel = require("./model/IATmodel");
 const IATAdminSelection = require("./model/IATAdminSelection");
 const normalUserSign = require("./model/normalUserSign");
+const userDscore = require("./model/userDscore");
 
 // config backend // 
 const app = express();
@@ -25,6 +29,28 @@ app.use(express.urlencoded());
 
 const port = process.env.PORT
 const hashRound = process.env.saltRounds 
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './image_storage')
+    },
+    filename: (req, file, cb) => {
+        cb(null, 'file-' + Date.now() + '.' +
+        file.originalname.split('.')[file.originalname.split('.').length-1])}
+})
+
+const upload = multer({ 
+    storage: storage, 
+    limits:{
+        fileSize:3670016
+    }
+})
+
+app.post("/testimg",upload.single('fileupload'), async (req, res) =>{
+
+})
+
+
 
 app.get('/debug', async (req, res) => {
     res.send("ok")
@@ -81,6 +107,12 @@ app.post("/creataiat", auth,async (req, res) => {
 
     const {
         runner, 
+        btn_left,
+        btn_right,
+        attribute_pratice_name,
+        attribute_test_name,
+        target_pratice_name,
+        target_test_name,
         target_pratice, 
         target_test, 
         attribute_pratice,
@@ -98,6 +130,12 @@ app.post("/creataiat", auth,async (req, res) => {
 
         IATmodel.create({
             runner:runner, 
+            btn_left:btn_left,
+            btn_right:btn_right,
+            attribute_pratice_name:attribute_pratice_name,
+            attribute_test_name:attribute_test_name,
+            target_pratice_name:target_pratice_name,
+            target_test_name:target_test_name,
             target_pratice:target_pratice, 
             target_test:target_test, 
             attribute_pratice:attribute_pratice,
@@ -136,10 +174,27 @@ app.get("/findingiat", auth,async (req, res) => {
     }
 });
 
+app.post("/iatquerydata" , async (req, res) => {
+    const {runner} = req.body;
+    // console.log(runner)
+    try{
+        const dataRunner = await IATmodel.findOne({runner:runner});
+        res.send(dataRunner)
+    }catch(err){
+        console.log("error api iatquerydata ==> ", err);
+        res.sendStatus(500)
+    }
+    
+
+})
+
 app.get("/iatselected", async (req, res) => {
     try{
         const fetchRunner = await IATAdminSelection.findOne({is_selection:true});
-        res.send(fetchRunner)
+        // console.log("fetchRunner ==> ",fetchRunner)
+        const listIAT = await  IATmodel.findOne({runner:fetchRunner.runner});
+        
+        res.send(listIAT)
     }catch(err){
         console.log("err in api iatselected: "+ err);
         res.sendStatus(500);
@@ -229,35 +284,32 @@ app.post("/analysis", async (req, res) => {
     let arrayOfMillisecondsD4 = [];
     let arrayOfMillisecondsD6 = [];
     let arrayOfMillisecondsD7 = [];
-    let sumOfMilliseconds;
-    let rangeOfArray;
-    
 
     try{
         // console.log(iatReply);
 
         iatReply.forEach((element) => {
 
-            if(element.typeCal === "D3"){
+            if(element.typeCal === "b3"){
                 if(element.milliseconds >= 1000){
                     arrayOfMillisecondsD3.push(0);
                 }else{
                     arrayOfMillisecondsD3.push(element.milliseconds);
                 }
                 
-            }else if(element.typeCal === "D4"){
+            }else if(element.typeCal === "b4"){
                 if(element.milliseconds >= 1000){
                     arrayOfMillisecondsD4.push(0);
                 }else{
                     arrayOfMillisecondsD4.push(element.milliseconds);
                 }
-            }else if(element.typeCal === "D6"){
+            }else if(element.typeCal === "b6"){
                 if(element.milliseconds >= 1000){
                     arrayOfMillisecondsD6.push(0);
                 }else{
                     arrayOfMillisecondsD6.push(element.milliseconds);
                 }
-            }else if(element.typeCal === "D7"){
+            }else if(element.typeCal === "b7"){
                 // console.log("D7 ==> ",element.milliseconds)
                 if(element.milliseconds >= 1000){
                     arrayOfMillisecondsD7.push(0);
@@ -282,10 +334,36 @@ app.post("/analysis", async (req, res) => {
         const sendD = {
             Dscore: Dscore
         }
+
+        try{
+
+
+            await userDscore.create({
+                firstname:firstname,
+                lastname:lastname,
+                phonenum:phonenum,
+                gender:gender,
+                birthday:birthday,
+                personalities:personalities,
+                dscore:Dscore,
+                result:iatReply
+            });
+            
+            // const replyRsult = {
+            //     result: sendD
+            // }
+            res.send(sendD)
+
+        }catch(err){
+            console.log("err in api analysis: "+ err);
+            res.sendStatus(500)
+        }
+
         // console.log(Dscore)
-        res.send(sendD)
+        // res.send(sendD)
     }catch(err){
         console.log("err in api analysis: "+ err);
+        res.sendStatus(500)
     }
 
 });
