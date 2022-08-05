@@ -227,7 +227,8 @@ export default {
         console.log('b3')
         if(this.indexCount >= 20){
           this.isType = "b4"
-          this.indexCount = 0
+          this.indexCount = 0;
+          this.isCompareAttrubuteAndTest = true;
         }
 
         const timing = performance.now();
@@ -260,6 +261,7 @@ export default {
           this.isType = "b5"
           this.switchType = true
           this.indexCount = 0
+          this.isCompareAttrubuteAndTest = false;
         }
         // console.log("D4")
         const timing = performance.now();
@@ -290,6 +292,7 @@ export default {
         if(this.indexCount >= 10){
           this.isType = "b6"
           this.indexCount = 0
+          this.isCompareAttrubuteAndTest = true;
         }
 
         this.isSubWord = "";
@@ -320,6 +323,7 @@ export default {
         if(this.indexCount >= 20){
           this.isType = "b7"
           this.indexCount = 0
+          this.isCompareAttrubuteAndTest = true;
         }
 
         const timing =  performance.now();
@@ -378,6 +382,7 @@ export default {
         if(this.indexCount >= 40){
           this.isFinsh = true;
           this.indexCount = 0
+          this.isCompareAttrubuteAndTest = false;
         }
         
       }
